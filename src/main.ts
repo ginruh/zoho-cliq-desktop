@@ -1,21 +1,26 @@
-import { app, BrowserWindow, session } from "electron";
+import { app, BrowserWindow, Menu, nativeImage, session, Tray } from "electron";
 import * as path from "path";
 
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    height: 600,
-    width: 800,
+    height: 1000,
+    width: 1200,
+    title: 'Zoho Cliq',
+    icon: __dirname + '/../public/icons/256.png',
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
+      devTools: !app.isPackaged,
     },
   });
 
-    // and load the index.html of the app.
+    // and load the zoho cliq
   mainWindow.loadURL('https://cliq.zoho.com/index.do')
-
+  
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  if (!app.isPackaged) {
+    mainWindow.webContents.openDevTools();
+  }
   
   const blockedURLs: string[] = [];
   
@@ -50,6 +55,23 @@ app.on("ready", () => {
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
+});
+
+let tray = null;
+app.whenReady().then(() => {
+  const icon = nativeImage.createFromPath(__dirname + '/../assets/icons/256.png');
+  tray = new Tray(icon);
+  
+  const contextMenu = Menu.buildFromTemplate([
+    { label: 'Item1', type: 'radio' },
+    { label: 'Item2', type: 'radio' },
+    { label: 'Item3', type: 'radio', checked: true },
+    { label: 'Item4', type: 'radio' }
+  ])
+
+  tray.setToolTip('Zoho Cliq');
+  tray.setContextMenu(contextMenu);
+  tray.setTitle('This is my title');
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
