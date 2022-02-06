@@ -2,13 +2,10 @@
   "name": "zoho-cliq-desktop",
   "version": "0.8.5",
   "description": "Zoho Cliq web app wrapper",
-  "main": "./dist/main.js",
+  "main": "./src/main.js",
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "lint": "eslint -c .eslintrc --ext .ts ./src",
-    "start": "npm run build && electron ./dist/main.js",
-    "dev": "electron ./dist/main.js",
+    "lint": "eslint -c .eslintrc.js ./src",
+    "start": "electron ./src/main.js",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
   },
@@ -31,35 +28,31 @@
       "buildResources": "public"
     },
     "files": [
-      "./dist/**/*",
+      "./src/**/*",
       "./node_modules/**/*",
-      "./public/**/*",
       "package.json"
     ],
     "linux": {
-      "icon": "public/icons/cliq.png",
+      "icon": "src/assets/icons/512.png",
       "asar": true,
       "category": "Internet",
+      "description": "Business and Team chat",
       "synopsis": "Chat and communication",
-      "target": ["deb", "AppImage"]
-    },
-    "deb": {
-      "depends": [
-        "libappindicator1",
-        "libnotify4"
+      "target": [
+        "deb",
+        "AppImage"
       ]
     }
   },
   "license": "MIT",
   "devDependencies": {
-    "@types/node-notifier": "^8.0.2",
-    "@types/ws": "^8.2.2",
-    "@typescript-eslint/eslint-plugin": "^4.33.0",
-    "@typescript-eslint/parser": "^4.33.0",
     "electron": "^17.0.0",
     "electron-builder": "^22.14.5",
     "eslint": "^7.32.0",
-    "typescript": "^4.5.5"
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.2.0"
   },
   "dependencies": {
     "node-notifier": "^10.0.1",
