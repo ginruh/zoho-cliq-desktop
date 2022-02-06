@@ -1,11 +1,11 @@
 {
   "name": "zoho-cliq-desktop",
-  "version": "0.8.5",
-  "description": "Zoho Cliq web app wrapper",
+  "version": "0.9.1",
+  "description": "Unofficial client for Zoho Cliq",
   "main": "./src/main.js",
   "scripts": {
     "lint": "eslint -c .eslintrc.js ./src",
-    "start": "electron ./src/main.js",
+    "start": "electron .",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
   },
@@ -34,10 +34,14 @@
     ],
     "linux": {
       "icon": "src/assets/icons/512.png",
-      "asar": true,
       "category": "Internet",
       "description": "Business and Team chat",
       "synopsis": "Chat and communication",
+      "desktop": {
+        "Name": "Zoho Cliq",
+        "Comment": "Unofficial client for Zoho Cliq",
+        "StartupWMClass": "zoho-cliq-desktop"
+      },
       "target": [
         "deb",
         "AppImage"

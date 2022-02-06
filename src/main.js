@@ -17,7 +17,7 @@ function createWindow () {
   })
 
   // and load the zoho cliq
-  mainWindow.loadURL('https://cliq.zoho.com/index.do')
+  mainWindow.loadURL('https://cliq.zoho.in/index.do')
 
   // Open the DevTools.
   if (!app.isPackaged) {
@@ -27,7 +27,7 @@ function createWindow () {
   const blockedURLs = []
 
   session.defaultSession.webRequest.onBeforeSendHeaders(
-    { urls: ['wss://*.zoho.com/pconnect*'] },
+    { urls: ['wss://*.zoho.in/pconnect*'] },
     (details, cb) => {
       mainWindow.webContents.once('did-finish-load', () => {
         const { url } = details
@@ -70,7 +70,7 @@ app.whenReady().then(() => {
     {
       label: 'Open',
       click: () => {
-        createWindow()
+        mainWindow.show()
       }
     },
     {

@@ -2,8 +2,7 @@
 // All of the Node.js APIs are available in the preload process.
 // It has the same sandbox as a Chrome extension.
 
-const { ipcRenderer } = require('electron')
-const notifier = require('node-notifier')
+const { ipcRenderer, BrowserWindow } = require('electron')
 const WebSocket = require('ws')
 
 const connect = ({ url, headers }) => {
@@ -18,15 +17,14 @@ const connect = ({ url, headers }) => {
       const messages = JSON.parse(data.toString())
       messages.forEach((message) => {
         if (message.mtype === '12') {
-          notifier.notify({
-            title: message.msg.nname,
-            message: message.msg.notification_text,
-            wait: true,
-            type: 'info'
-          }, (error, response) => {
-            if (error) console.log(error)
-            else console.log(response)
+          const notification = new Notification(message.msg.nname, {
+            body: message.msg.notification_text,
+            icon: 'https://zohowebstatic.com/sites/default/files/ogimage/cliq-logo.png'
           })
+          notification.onclick = () => {
+            BrowserWindow.getCurrentWindow().show()
+          }
+          notification.show()
         }
       })
     } catch (error) {}
