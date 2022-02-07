@@ -1,8 +1,9 @@
 {
-  "name": "zoho-cliq-desktop",
+  "name": "cliq",
   "version": "0.9.1",
   "description": "Unofficial client for Zoho Cliq",
   "main": "./src/main.js",
+  "homepage": "https://github.com/iyorozuya/zoho-cliq-desktop",
   "scripts": {
     "lint": "eslint -c .eslintrc.js ./src",
     "start": "electron .",
@@ -12,20 +13,19 @@
   "repository": "https://github.com/iyorozuya/zoho-cliq-desktop",
   "author": {
     "name": "Akshay",
-    "email": "iyaksha@tutanota.com"
+    "email": "iyaksha@tutanota.com",
+    "url": "https://github.com/iyorozuya"
   },
   "keywords": [
-    "zoho-cliq",
+    "Zoho Cliq",
     "chat",
-    "desktop",
-    "typescript"
+    "desktop"
   ],
   "build": {
-    "appId": "com.iyorozuya.zoho-cliq-desktop",
+    "appId": "com.iyorozuya.cliq",
     "productName": "Cliq",
     "directories": {
-      "output": "out",
-      "buildResources": "public"
+      "output": "out"
     },
     "files": [
       "./src/**/*",
@@ -33,14 +33,16 @@
       "package.json"
     ],
     "linux": {
-      "icon": "src/assets/icons/512.png",
-      "category": "Internet",
+      "icon": "./src/assets/icons",
+      "category": "Office",
       "description": "Business and Team chat",
       "synopsis": "Chat and communication",
+      "executableName": "cliq",
       "desktop": {
-        "Name": "Zoho Cliq",
-        "Comment": "Unofficial client for Zoho Cliq",
-        "StartupWMClass": "zoho-cliq-desktop"
+        "Name": "Cliq",
+        "StartupNotify": "true",
+        "Comment": "Zoho Cliq-The smart way to work",
+        "StartupWMClass": "cliq"
       },
       "target": [
         "deb",
@@ -59,7 +61,6 @@
     "eslint-plugin-promise": "^5.2.0"
   },
   "dependencies": {
-    "node-notifier": "^10.0.1",
     "ws": "^8.4.2"
   }
 }

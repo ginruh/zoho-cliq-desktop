@@ -9,7 +9,7 @@ function createWindow () {
     height: 1000,
     width: 1200,
     title: 'Zoho Cliq',
-    icon: path.join(__dirname, 'assets', 'icons', '256.png'),
+    icon: path.join(__dirname, 'assets', 'icons', '512x512.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       devTools: !app.isPackaged
@@ -17,17 +17,24 @@ function createWindow () {
   })
 
   // and load the zoho cliq
-  mainWindow.loadURL('https://cliq.zoho.in/index.do')
+  mainWindow.loadURL('https://cliq.zoho.com/index.do')
 
   // Open the DevTools.
   if (!app.isPackaged) {
     mainWindow.webContents.openDevTools()
   }
 
+  app.setBadgeCount(10)
+
   const blockedURLs = []
 
   session.defaultSession.webRequest.onBeforeSendHeaders(
-    { urls: ['wss://*.zoho.in/pconnect*'] },
+    {
+      urls: [
+        'wss://*.zoho.com/pconnect*',
+        'wss://*.zoho.in/pconnect*'
+      ]
+    },
     (details, cb) => {
       mainWindow.webContents.once('did-finish-load', () => {
         const { url } = details
@@ -62,7 +69,7 @@ app.on('ready', () => {
 let tray = null
 app.whenReady().then(() => {
   const icon = nativeImage.createFromPath(
-    path.join(__dirname, 'assets', 'icons', '256.png')
+    path.join(__dirname, 'assets', 'icons', '256x256.png')
   )
   tray = new Tray(icon)
 
@@ -70,7 +77,7 @@ app.whenReady().then(() => {
     {
       label: 'Open',
       click: () => {
-        mainWindow.show()
+        if (mainWindow) mainWindow.show()
       }
     },
     {

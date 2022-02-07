@@ -16,15 +16,32 @@ const connect = ({ url, headers }) => {
     try {
       const messages = JSON.parse(data.toString())
       messages.forEach((message) => {
-        if (message.mtype === '12') {
-          const notification = new Notification(message.msg.nname, {
-            body: message.msg.notification_text,
-            icon: 'https://zohowebstatic.com/sites/default/files/ogimage/cliq-logo.png'
-          })
-          notification.onclick = () => {
-            BrowserWindow.getCurrentWindow().show()
+        console.log(message)
+        if (message.mtype === '12' && message.retry !== 'true') {
+          const { msg } = message
+          const currentUserId = localStorage.getItem('ownerid')
+          if (msg.sender !== currentUserId) {
+            if (msg.notification_props) {
+              try {
+                const notificationProps = JSON.parse(msg.notification_props)
+                const { mentions } = notificationProps
+                if (mentions) {
+                  mentions.forEach(mention => {
+                    msg.notification_text = msg.notification_text.replace(`{@${mention.id}}`, mention.dn)
+                  })
+                }
+              } catch (error) {
+                console.error(error)
+              }
+            }
+            const notification = new Notification(msg.nname, {
+              body: msg.notification_text
+            })
+            notification.onclick = () => {
+              BrowserWindow.getCurrentWindow().show()
+            }
+            notification.show()
           }
-          notification.show()
         }
       })
     } catch (error) {}
