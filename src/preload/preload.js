@@ -34,8 +34,9 @@ const connect = ({ url, headers }) => {
                 console.error(error)
               }
             }
-            const notification = new Notification(msg.nname, {
-              body: msg.notification_text
+            const notification = new Notification(`@${msg.nname}`, {
+              body: msg.notification_text,
+              icon: `https://contacts.zoho.com/file?ID=${msg.sender}&fs=thumb`
             })
             notification.onclick = () => {
               BrowserWindow.getCurrentWindow().show()
