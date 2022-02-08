@@ -93,7 +93,10 @@ if (!appLock) {
       {
         label: 'Open',
         click: () => {
-          if (mainWindow) mainWindow.show()
+          if (mainWindow) {
+            mainWindow.show()
+            mainWindow.focus()
+          }
         }
       },
       {
