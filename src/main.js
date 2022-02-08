@@ -4,40 +4,24 @@ const path = require('path')
 let mainWindow = null
 
 function createWindow () {
-  // Create splash window
-  const splashWindow = new BrowserWindow({
-    height: 250,
-    width: 400,
-    frame: false,
-    center: true,
-    title: 'Cliq',
-    icon: path.join(__dirname, 'assets', 'icons', '512x512.png')
-  })
-
-  splashWindow.loadFile(path.join(__dirname, 'splash.html'))
-
   // Create the browser window
   mainWindow = new BrowserWindow({
     height: 1000,
     width: 1200,
-    show: false,
+    show: true,
     title: 'Zoho Cliq',
     icon: path.join(__dirname, 'assets', 'icons', '512x512.png'),
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      devTools: !app.isPackaged,
-      webviewTag: true
+      preload: path.join(__dirname, 'preload', 'preload.js'),
+      devTools: !app.isPackaged
     }
   })
 
-  // and load the zoho cliq
-  mainWindow.loadFile(path.join(__dirname, 'cliq.html'))
+  // remove menu
+  mainWindow.removeMenu()
 
-  // close splash screen and show cliq window when cliq window loaded
-  mainWindow.webContents.on('did-finish-load', () => {
-    splashWindow.close()
-    mainWindow.show()
-  })
+  // load home.html file
+  mainWindow.loadURL(`file://${path.join(__dirname, 'home.html')}`)
 
   // Open the DevTools.
   if (!app.isPackaged) {
