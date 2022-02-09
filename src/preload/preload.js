@@ -2,7 +2,7 @@
 // All of the Node.js APIs are available in the preload process.
 // It has the same sandbox as a Chrome extension.
 
-const { ipcRenderer, BrowserWindow } = require('electron')
+const { ipcRenderer, BrowserWindow, contextBridge } = require('electron')
 const WebSocket = require('ws')
 
 const connect = ({ url, headers }) => {
@@ -15,9 +15,10 @@ const connect = ({ url, headers }) => {
   ws.on('message', (data) => {
     try {
       const messages = JSON.parse(data.toString())
+      const messageSeq = []
       messages.forEach((message) => {
-        console.log(message)
-        if (message.mtype === '12' && message.retry !== 'true') {
+        messageSeq.push(message.seq)
+        if (['12', '20'].includes(message.mtype) && message.retry !== 'true') {
           const { msg } = message
           const currentUserId = localStorage.getItem('ownerid')
           if (msg.sender !== currentUserId) {
@@ -36,15 +37,19 @@ const connect = ({ url, headers }) => {
             }
             const notification = new Notification(`@${msg.nname}`, {
               body: msg.notification_text,
-              icon: `https://contacts.zoho.com/file?ID=${msg.sender}&fs=thumb`
+              icon: `https://contacts.zoho.in/file?ID=${msg.sender}&fs=thumb`
             })
             notification.onclick = () => {
               BrowserWindow.getCurrentWindow().show()
             }
-            notification.show()
           }
         }
       })
+      ws.send(
+        JSON.stringify({
+          s: messageSeq.join(',')
+        })
+      )
     } catch (error) {}
   })
   ws.on('open', () => {
@@ -66,3 +71,22 @@ ipcRenderer.on('websocket-connection', (event, arg) => {
   const { url, headers } = JSON.parse(arg)
   connect({ url, headers })
 })
+
+ipcRenderer.on('redirect-url', (event, url) => {
+  console.log(window.location.href, url)
+  if (window.location.href !== url) {
+    window.location.href = url
+  }
+})
+
+contextBridge.exposeInMainWorld(
+  'electron',
+  {
+    onLocationChange: (url) => {
+      ipcRenderer.send('cliq-dashboard-url', url)
+    },
+    resetCliqDashboardURL: () => {
+      ipcRenderer.send('reset-cliq-dashboard-url')
+    }
+  }
+)

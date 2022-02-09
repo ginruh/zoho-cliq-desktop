@@ -53,3 +53,8 @@ html, body {
     transform:rotate(450deg);
   }
 }
+
+webview {
+  height: 0;
+  width: 0;
+}

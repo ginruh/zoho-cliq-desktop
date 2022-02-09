@@ -1,5 +1,8 @@
 const { app, BrowserWindow, Menu, nativeImage, session, Tray } = require('electron')
 const path = require('path')
+const store = require('./store')
+
+const homePageURL = 'https://www.zoho.com/en-in/cliq/'
 
 let mainWindow = null
 let tray = null
@@ -16,7 +19,8 @@ function createWindow () {
     icon: path.join(__dirname, 'assets', 'icons', '512x512.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload', 'preload.js'),
-      devTools: !app.isPackaged
+      devTools: !app.isPackaged,
+      webviewTag: true
     }
   })
 
@@ -31,10 +35,27 @@ function createWindow () {
     mainWindow.webContents.openDevTools()
   }
 
+  mainWindow.once('ready-to-show', () => {
+    const cliqDashboardURL = store.get('cliqDashboardURL')
+    if (cliqDashboardURL) {
+      mainWindow.webContents.send('redirect-url', cliqDashboardURL)
+    } else {
+      mainWindow.webContents.send('redirect-url', homePageURL)
+    }
+  })
+
   mainWindow.on('close', (event) => {
     if (!app.isQuiting) {
       event.preventDefault()
       mainWindow.hide()
+    }
+  })
+
+  mainWindow.webContents.on('did-navigate', (event, url) => {
+    if (url.includes('/index.do')) {
+      store.set('cliqDashboardURL', url)
+    } else if (url === 'https://www.zoho.com/cliq/login.html') {
+      store.delete('cliqDashboardURL')
     }
   })
 
@@ -50,8 +71,9 @@ function createWindow () {
     (details, cb) => {
       mainWindow.webContents.once('did-finish-load', () => {
         const { url } = details
-        if (!blockedURLs.includes(url)) {
+        if (blockedURLs.length === 0) {
           blockedURLs.push(url)
+          console.log(details.url)
           mainWindow.webContents.send('websocket-connection', JSON.stringify({
             url: details.url,
             headers: details.requestHeaders
